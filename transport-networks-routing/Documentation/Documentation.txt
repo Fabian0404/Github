@@ -1,0 +1,85 @@
+Install instructions:
+
+
+------------------------------------------
+
+
+Software requirements:
+
+- PostgreSQL / PostGIS
+
+- PostGIS-extention pgRouting v2.0.0
+
+- Geoserver v2.6
+
+- OpenLayers v3.1.1
+
+- apache or another webserver
+
+
+------------------------------------------
+
+
+Database setup:
+
+- Download database source file (file: DB -> SicherungDB_routing_28Jan2015.backup)
+
+- Import data to PostgreSQL (pgAdmin) via SicherungDB_routing_28Jan2015.backup
+
+- Needed tables: 
+	bahn_2
+	bahn_2_vertices_pgr
+	flugzeug_2
+	flugzeug_2_vertices_pgr
+	buffer-umrandung
+	bundeslaender
+
+- database name: routing
+
+
+------------------------------------------
+
+
+Geoserver setup:
+
+- create workspace 'opensourcegis' in geoserver
+
+- create data storage and its connection to the PostGIS database 'routing'
+
+- add layers from the database to Geoserver
+
+- Create 2 SQL-views by using this statements(Statements -> SQL_Statement_for_pgrouting + SQL_Statement_for_pgrouting2) for 'flugzeug_2' -> name: pgrouting and 'bahn_2'-> name: pgrouting2 with:
+	Standard value -> 0
+	Regular statement validity -> ^-?[d.]+$
+	Type: LineString
+	SRID: 4326
+
+- Set the coordinate-reference-system information of 'pgrouting' and 'pgrouting2' to '3857', 'Used Coordinate-reference-system' to 'Reprojection of the native to the declared' and set the native surrounding rectangle
+
+- add style-files:
+	Bahn_HG
+	Bahn_selektiert
+	Buffer
+	Bundesländer
+	flug
+
+- Connect the styles to the layers:
+	buffer-umrandung -> Buffer
+	bundeslaender -> Bundesländer
+	bahn_2 -> Bahn_HG
+	pgrouting -> flug
+	pgrouting2 -> Bahn_selektiert
+
+- Publish layers as WMS
+
+
+------------------------------------------
+
+
+OpenLayers setup:
+
+- Use the html-file 'basis7_4' that includes the OpenLayers functionality
+- Copy the folder 'v3.1.1' (OpenLayers3 -> v3.1.1) into the same folder as the HTML file
+- Copy the icons (Legend_Icons -> 'bahn' and 'flug') and the banner (Pictures -> Banner) in the same folder as the HTML
+
+
